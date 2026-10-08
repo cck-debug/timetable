@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>雙寶幼稚園通告管家 - Jerald & Jervis 香港特別版</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-teal-500 selection:text-white">
+  
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    const Icon = ({ name, className = "w-4 h-4" }) => {
+      const icons = {
+        calendar: <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />,
+        checkSquare: <path d="M9 11l2 2 4-4m6 2a9 9 0 11-18 0 9 9 9 0 0118 0z" />,
+        plus: <path d="M12 5v14M5 12h14" />,
+        sparkles: <path d="M12 3v3m0 12v3M3 12h3m12 0h3m-2.5-6.5l-2 2m-7 7l-2 2m0-11l2 2m7 7l2 2" />,
+        upload: <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5-5 5 5m-5-5v12" />,
+        trash: <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />,
+        filter: <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" />,
+        search: <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />,
+        bell: <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" />,
+        fileText: <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8" />,
+        alert: <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />,
+        clock: <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 9 0 0118 0z" />,
+        copy: <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />,
+        download: <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />,
+        book: <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V2H6.5A2.5 2.5 0 004 4.5v15z" />,
+        dollar: <path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />,
+        shirt: <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10a2 2 0 002 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z" />,
+        send: <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />,
+        external: <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />,
+        check: <path d="M20 6L9 17l-5-5" />,
+        chevronLeft: <path d="M15 18l-6-6 6-6" />,
+        chevronRight: <path d="M9 18l6-6-6-6" />,
+        loader: <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />,
+        printer: <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z" />,
+        database: <path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />,
+        refresh: <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />,
+        key: <path d="M21 2l-2 2m-1.5 1.5l-3 3m-2 2l-3 3m-2 2l-3 3M3 21h4l1.5-1.5L7 18l-1.5-1.5L4 18l-1 3z" />,
+        heart: <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+      };
+
+      return (
+        <svg 
+          className={className} 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          viewBox="0 0 24 24"
+        >
+          {icons[name] || icons.fileText}
+        </svg>
+      );
+    };
+
+    const KIDS_CONFIG = [
+      { id: 'all', name: '雙寶全部', color: 'bg-slate-100 text-slate-800' },
+      { id: 'kid1', name: '大仔 Jerald (K2 LC1)', school: '樂希幼兒學校 HARTS PRESCHOOL', color: 'bg-blue-100 text-blue-900 border-blue-300' },
+      { id: 'kid2', name: '細仔 Jervis (PN PNC)', school: '學之園星匯校', color: 'bg-amber-100 text-amber-900 border-amber-300' },
+      { id: 'both', name: '全體 (雙寶)', school: '樂希 & 學之園', color: 'bg-purple-100 text-purple-900 border-purple-300' }
+    ];
+
+    const INITIAL_NOTICES = [
+      {
+        id: 'n1',
+        title: 'HARTS 樂希 K2 英語朗誦比賽報名通知',
+        child: '大仔 Jerald (K2 LC1)',
+        childId: 'kid1',
+        date: '2026-10-18',
+        time: '截止交回條',
+        category: '學習與課業',
+        summary: '樂希幼兒學校 K2 班朗誦比賽回條，請選擇參賽組別並於 eClass / 紙本簽署。',
+        itemsToBring: ['已簽署比賽回條'],
+        feesOrDocs: '報名費用全免',
+        completed: false,
+        urgent: true,
+        createdDate: '2026-10-01'
+      },
+      {
+        id: 'n2',
+        title: '學之園 (星匯校) PN 班秋季親子郊遊活動',
+        child: '細仔 Jervis (PN PNC)',
+        childId: 'kid2',
+        date: '2026-10-24',
+        time: '09:00 - 14:00',
+        category: '戶外活動',
+        summary: '學之園星匯校 PN 班秋季郊遊，請家長帶同幼兒著整齊星匯校體育服到校集合。',
+        itemsToBring: ['星匯校體育服', '貼名水壺 (Jervis)', '替換衫褲1套', '濕紙巾及餐巾'],
+        feesOrDocs: '繳交活動費用 $120 (八達通 / 轉數快辦理)',
+        completed: false,
+        urgent: true,
+        createdDate: '2026-10-02'
+      },
+      {
+        id: 'n3',
+        title: '雙寶萬聖節便服派對裝扮安排',
+        child: '全體 (雙寶)',
+        childId: 'both',
+        date: '2026-10-30',
+        time: '全日活動',
+        category: '學校派對',
+        summary: '樂希幼兒學校與學之園星匯校同步舉辦萬聖節派對，Jerald 與 Jervis 當日均可穿著便服或萬聖節服飾到校。',
+        itemsToBring: ['獨立包裝小分享包 (自選)'],
+        feesOrDocs: '無額外費用',
+        completed: true,
+        urgent: false,
+        createdDate: '2026-10-04'
+      }
+    ];
+
+    const CATEGORIES = ['全部類別', '戶外活動', '行政與健康', '學校派對', '學習與課業', '繳費事項', '假期與特別安排'];
+
+    const getGoogleCalendarUrl = (notice) => {
+      const title = `[${notice.child}] ${notice.title}`;
+      const cleanDate = notice.date.replace(/-/g, '');
+      const details = `【雙寶通告】\n對象：${notice.child}\n類別：${notice.category}\n摘要：${notice.summary}\n需準備物資：${(notice.itemsToBring && notice.itemsToBring.length > 0) ? notice.itemsToBring.join(', ') : '無'}\n繳費/文件：${notice.feesOrDocs || '無'}`;
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${cleanDate}/${cleanDate}&details=${encodeURIComponent(details)}`;
+    };
+
+    function App() {
+      const [notices, setNotices] = useState(() => {
+        try {
+          const saved = localStorage.getItem('kg_notices_data_jerald_jervis_v2');
+          return saved ? JSON.parse(saved) : INITIAL_NOTICES;
+        } catch (e) {
+          return INITIAL_NOTICES;
+        }
+      });
+
+      const [geminiApiKey, setGeminiApiKey] = useState(() => {
+        return localStorage.getItem('gemini_api_key_v2') || '';
+      });
+
+      const [activeTab, setActiveTab] = useState('timeline'); 
+      const [selectedKidFilter, setSelectedKidFilter] = useState('all');
+      const [selectedCategory, setSelectedCategory] = useState('全部類別');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [toastMessage, setToastMessage] = useState(null);
+      const [importText, setImportText] = useState('');
+      const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+      // AI Form State
+      const [rawText, setRawText] = useState('');
+      const [selectedImage, setSelectedImage] = useState(null);
+      const [imagePreview, setImagePreview] = useState(null);
+      const [isParsing, setIsParsing] = useState(false);
+
+      // Calendar View State
+      const [currentMonthDate, setCurrentMonthDate] = useState(new Date(2026, 9, 1));
+
+      const [formData, setFormData] = useState({
+        title: '',
+        childId: 'kid1',
+        date: new Date().toISOString().split('T')[0],
+        time: '全日',
+        category: '行政與健康',
+        summary: '',
+        itemsToBring: '',
+        feesOrDocs: '',
+        urgent: false
+      });
+
+      useEffect(() => {
+        try {
+          localStorage.setItem('kg_notices_data_jerald_jervis_v2', JSON.stringify(notices));
+        } catch (e) {
+          console.error("Storage write error", e);
+        }
+      }, [notices]);
+
+      useEffect(() => {
+        if (geminiApiKey) {
+          localStorage.setItem('gemini_api_key_v2', geminiApiKey);
+        }
+      }, [geminiApiKey]);
+
+      const showToast = (msg) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(null), 3000);
+      };
+
+      const exportJSONBackup = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(notices, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `雙寶通告備份_Jerald_Jervis_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        showToast('📦 已匯出 JSON 備份檔！可傳給另一半存檔。');
+      };
+
+      const copyJSONText = () => {
+        try {
+          const textarea = document.createElement('textarea');
+          textarea.value = JSON.stringify(notices);
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          showToast('📋 已複製備份文字！可以貼給另一半。');
+        } catch (e) {
+          showToast('複製失敗，請手動複製');
+        }
+      };
+
+      const handleImportJSON = (jsonString) => {
+        try {
+          const parsed = JSON.parse(jsonString);
+          if (Array.isArray(parsed)) {
+            setNotices(parsed);
+            showToast('✅ 成功還原進度！資料已更新。');
+            setImportText('');
+          } else {
+            showToast('⚠️ 備份格式不正確');
+          }
+        } catch (e) {
+          showToast('⚠️ 解析失敗，請確認貼上的文字格式為 JSON');
+        }
+      };
+
+      const handleFileUploadImport = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          handleImportJSON(event.target.result);
+        };
+        reader.readAsText(file);
+      };
+
+      const executeResetToDemo = () => {
+        setNotices(INITIAL_NOTICES);
+        setShowResetConfirm(false);
+        showToast('已重設為雙寶預設範例通告');
+      };
+
+      const handleAIParse = async () => {
+        if (!rawText.trim() && !selectedImage) {
+          showToast('請先輸入通告文字或上載紙本通告相片！');
+          return;
+        }
+
+        if (!geminiApiKey) {
+          showToast('💡 請先在「夫妻同步 & 設定」分頁填寫 API Key');
+          setActiveTab('share');
+          return;
+        }
+
+        setIsParsing(true);
+
+        try {
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`;
+
+          const systemPrompt = `你是一個幼稚園通告秘書。家庭成員背景如下：
+- 大仔：鍾翊朗 Jerald，目前就讀【K2 樂希幼兒學校 HARTS PRESCHOOL (LC1班)】
+- 細仔：鍾翊淏 Jervis，目前就讀【PN 學之園星匯校 (PNC班)】
+
+請分析通告內容，整理為 JSON 格式：
+{
+  "title": "簡短通告標題 (例如: 樂希K2郊遊 或 學之園PN回條)",
+  "childId": "判定對象: 'kid1' (大仔 Jerald / K2 / 樂希 HARTS PRESCHOOL), 'kid2' (細仔 Jervis / PN / 學之園星匯校), 或 'both' (兩位孩子/全校)",
+  "date": "主要活動日期或截止日期 (格式: YYYY-MM-DD)",
+  "time": "時間描述 (例如: 08:30 - 15:30 或 截止交回條)",
+  "category": "必須為以下之一: '戶外活動' | '行政與健康' | '學校派對' | '學習與課業' | '繳費事項' | '假期與特別安排'",
+  "summary": "1-2句重點摘要說明",
+  "itemsToBring": ["物資1", "物資2"],
+  "feesOrDocs": "費用或文件說明 (無則填 '無')",
+  "urgent": true/false
+}
+請只輸出純 JSON 字串。`;
+
+          let parts = [];
+          if (rawText.trim()) parts.push({ text: `請分析此通告內容：\n${rawText}` });
+          if (selectedImage) {
+            parts.push({
+              inlineData: {
+                mimeType: selectedImage.type || "image/jpeg",
+                data: selectedImage.base64
+              }
+            });
+            parts.push({ text: "請一併識別圖中的文字與事項。" });
+          }
+
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ role: 'user', parts }],
+              systemInstruction: { parts: [{ text: systemPrompt }] },
+              generationConfig: { responseMimeType: "application/json" }
+            })
+          });
+
+          const data = await response.json();
+          const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+          if (resultText) {
+            const parsed = JSON.parse(resultText);
+            setFormData({
+              title: parsed.title || '',
+              childId: parsed.childId || 'kid1',
+              date: parsed.date || new Date().toISOString().split('T')[0],
+              time: parsed.time || '全日',
+              category: parsed.category || '行政與健康',
+              summary: parsed.summary || '',
+              itemsToBring: Array.isArray(parsed.itemsToBring) ? parsed.itemsToBring.join(', ') : '',
+              feesOrDocs: parsed.feesOrDocs || '',
+              urgent: Boolean(parsed.urgent)
+            });
+            showToast('✨ AI 已成功提取通告細節！請確認後儲存。');
+          }
+        } catch (err) {
+          console.error("AI parse error", err);
+          showToast('💡 AI 提取失敗，請手動輸入資料。');
+        } finally {
+          setIsParsing(false);
+        }
+      };
+
+      const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result.split(',')[1];
+          setSelectedImage({
+            type: file.type,
+            base64: base64String
+          });
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      };
+
+      const handleSaveNotice = (e) => {
+        e.preventDefault();
+        if (!formData.title || !formData.date) {
+          showToast('⚠️ 請至少填寫通告標題與日期');
+          return;
+        }
+
+        const childObj = KIDS_CONFIG.find(k => k.id === formData.childId);
+
+        const newNotice = {
+          id: 'n_' + Date.now(),
+          title: formData.title,
+          child: childObj ? childObj.name : '大仔 Jerald (K2 LC1)',
+          childId: formData.childId,
+          date: formData.date,
+          time: formData.time || '全日',
+          category: formData.category,
+          summary: formData.summary,
+          itemsToBring: formData.itemsToBring ? formData.itemsToBring.split(/[,，\n]/).map(s => s.trim()).filter(Boolean) : [],
+          feesOrDocs: formData.feesOrDocs || '無',
+          completed: false,
+          urgent: formData.urgent,
+          createdDate: new Date().toISOString().split('T')[0]
+        };
+
+        setNotices([newNotice, ...notices]);
+        showToast('✅ 成功新增通告紀錄！');
+
+        setRawText('');
+        setSelectedImage(null);
+        setImagePreview(null);
+        setFormData({
+          title: '',
+          childId: 'kid1',
+          date: new Date().toISOString().split('T')[0],
+          time: '全日',
+          category: '行政與健康',
+          summary: '',
+          itemsToBring: '',
+          feesOrDocs: '',
+          urgent: false
+        });
+
+        setActiveTab('timeline');
+      };
+
+      const toggleComplete = (id) => {
+        setNotices(notices.map(n => n.id === id ? { ...n, completed: !n.completed } : n));
+        showToast('狀態已更新');
+      };
+
+      const deleteNotice = (id) => {
+        setNotices(notices.filter(n => n.id !== id));
+        showToast('通告已刪除');
+      };
+
+      const filteredNotices = useMemo(() => {
+        return notices.filter(item => {
+          const matchKid = selectedKidFilter === 'all' || item.childId === selectedKidFilter || item.childId === 'both';
+          const matchCategory = selectedCategory === '全部類別' || item.category === selectedCategory;
+          const matchSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              (item.itemsToBring && item.itemsToBring.some(i => i.toLowerCase().includes(searchQuery.toLowerCase())));
+          return matchKid && matchCategory && matchSearch;
+        }).sort((a, b) => new Date(a.date) - new Date(b.date));
+      }, [notices, selectedKidFilter, selectedCategory, searchQuery]);
+
+      const pendingUrgentCount = notices.filter(n => !n.completed && n.urgent).length;
+
+      const generateWhatsAppSummary = () => {
+        const upcoming = notices.filter(n => !n.completed).slice(0, 6);
+        let text = `🏫 *Jerald & Jervis 雙寶幼稚園通告與日程週報* 👦👦\n`;
+        text += `🎒 大仔 Jerald (K2 LC1 - 樂希幼兒學校 HARTS)\n`;
+        text += `🎒 細仔 Jervis (PN PNC - 學之園星匯校)\n`;
+        text += `📅 更新日期：${new Date().toLocaleDateString('zh-HK')}\n──────────────────\n\n`;
+
+        if (upcoming.length === 0) {
+          text += "🎉 目前無待辦通告！\n";
+        } else {
+          upcoming.forEach((item, index) => {
+            text += `${index + 1}. *[${item.child}] ${item.title}*\n`;
+            text += `📅 日期：${item.date} (${item.time})\n`;
+            if (item.feesOrDocs && item.feesOrDocs !== '無') text += `💰 繳費/回條：${item.feesOrDocs}\n`;
+            if (item.itemsToBring && item.itemsToBring.length > 0) text += `🎒 帶備物資：${item.itemsToBring.join(', ')}\n`;
+            text += `\n`;
+          });
+        }
+
+        text += `👉 請開啟網頁查看完整細節及簽署進度！❤️`;
+        return text;
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col">
+          {/* Toast Notification */}
+          {toastMessage && (
+            <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-medium border border-slate-700 flex items-center gap-2 animate-bounce">
+              <Icon name="check" className="w-4 h-4 text-emerald-400" />
+              <span>{toastMessage}</span>
+            </div>
+          )}
+
+          {}
+          <header className="bg-gradient-to-r from-teal-800 via-teal-900 to-indigo-950 text-white shadow-md sticky top-0 z-30 no-print">
+            <div className="max-w-5xl mx-auto px-4 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner">
+                  <Icon name="book" className="w-6 h-6 text-teal-200" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold tracking-tight flex items-center gap-2">
+                    雙寶幼稚園通告管家
+                    <span className="text-[10px] bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded-full shadow-xs">
+                      Jerald & Jervis 專屬版
+                    </span>
+                  </h1>
+                  <p className="text-xs text-teal-100/90 flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5">
+                    <span>👦 大仔 Jerald (樂希 K2 LC1)</span>
+                    <span>👶 細仔 Jervis (學之園星匯 PN PNC)</span>
+                    {pendingUrgentCount > 0 && (
+                      <span className="bg-rose-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-xs">
+                        <Icon name="bell" className="w-3 h-3" /> {pendingUrgentCount} 項優先處理
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button 
+                  onClick={() => setActiveTab('add')}
+                  className="px-3.5 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md transition-transform active:scale-95"
+                >
+                  <Icon name="sparkles" className="w-4 h-4 text-amber-950" /> 新增通告
+                </button>
+                <button 
+                  onClick={() => setActiveTab('share')}
+                  className="px-3 py-2 bg-white/15 hover:bg-white/25 text-white font-medium rounded-xl text-xs flex items-center gap-1.5 transition-colors"
+                >
+                  <Icon name="database" className="w-4 h-4" /> 同步與設定
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="max-w-5xl mx-auto px-4 flex overflow-x-auto border-t border-white/10 text-xs font-medium">
+              <button 
+                onClick={() => setActiveTab('timeline')}
+                className={`py-2.5 px-4 flex items-center gap-2 border-b-2 transition-all shrink-0 ${
+                  activeTab === 'timeline' ? 'border-amber-400 text-amber-300 font-bold bg-white/10' : 'border-transparent text-teal-100 hover:text-white'
+                }`}
+              >
+                <Icon name="clock" className="w-4 h-4" /> 雙寶綜合時間表
+              </button>
+              <button 
+                onClick={() => setActiveTab('checklist')}
+                className={`py-2.5 px-4 flex items-center gap-2 border-b-2 transition-all shrink-0 ${
+                  activeTab === 'checklist' ? 'border-amber-400 text-amber-300 font-bold bg-white/10' : 'border-transparent text-teal-100 hover:text-white'
+                }`}
+              >
+                <Icon name="checkSquare" className="w-4 h-4" /> 物資與繳費對照牆
+              </button>
+              <button 
+                onClick={() => setActiveTab('calendar')}
+                className={`py-2.5 px-4 flex items-center gap-2 border-b-2 transition-all shrink-0 ${
+                  activeTab === 'calendar' ? 'border-amber-400 text-amber-300 font-bold bg-white/10' : 'border-transparent text-teal-100 hover:text-white'
+                }`}
+              >
+                <Icon name="calendar" className="w-4 h-4" /> 月曆總覽
+              </button>
+              <button 
+                onClick={() => setActiveTab('add')}
+                className={`py-2.5 px-4 flex items-center gap-2 border-b-2 transition-all shrink-0 ${
+                  activeTab === 'add' ? 'border-amber-400 text-amber-300 font-bold bg-white/10' : 'border-transparent text-teal-100 hover:text-white'
+                }`}
+              >
+                <Icon name="plus" className="w-4 h-4" /> 擷取 / 新增通告
+              </button>
+              <button 
+                onClick={() => setActiveTab('share')}
+                className={`py-2.5 px-4 flex items-center gap-2 border-b-2 transition-all shrink-0 ${
+                  activeTab === 'share' ? 'border-amber-400 text-amber-300 font-bold bg-white/10' : 'border-transparent text-teal-100 hover:text-white'
+                }`}
+              >
+                <Icon name="database" className="w-4 h-4" /> 夫妻同步 & 設定
+              </button>
+            </div>
+          </header>
+
+          {/* Main Body */}
+          <main className="max-w-5xl mx-auto w-full px-4 py-6 flex-1">
+
+            {/* Profile Overview Card */}
+            <div className="mb-6 bg-gradient-to-r from-teal-50 via-indigo-50 to-amber-50 p-4 rounded-2xl border border-teal-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-white rounded-2xl shadow-xs border border-teal-200">
+                  <Icon name="heart" className="w-6 h-6 text-rose-500 fill-rose-100" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-slate-800">鍾氏雙寶學生檔案：</h2>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    <span className="text-xs bg-blue-100 text-blue-900 border border-blue-200 px-2.5 py-0.5 rounded-lg font-bold">
+                      大仔：鍾翊朗 Jerald (K2 LC1班) • 樂希幼兒學校 HARTS PRESCHOOL
+                    </span>
+                    <span className="text-xs bg-amber-100 text-amber-900 border border-amber-200 px-2.5 py-0.5 rounded-lg font-bold">
+                      細仔：鍾翊淏 Jervis (PN PNC班) • 學之園星匯校
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {}
+            {activeTab === 'timeline' && (
+              <div className="space-y-6">
+                <div className="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 space-y-3">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+                    <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
+                      <span className="text-xs text-slate-500 font-medium flex items-center gap-1 mr-1 shrink-0">
+                        <Icon name="filter" className="w-3.5 h-3.5" /> 選擇對象:
+                      </span>
+                      {KIDS_CONFIG.map(kid => (
+                        <button
+                          key={kid.id}
+                          onClick={() => setSelectedKidFilter(kid.id)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all shrink-0 ${
+                            selectedKidFilter === kid.id 
+                              ? 'bg-teal-800 text-white shadow-xs font-bold' 
+                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          }`}
+                        >
+                          {kid.name}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-2 w-full md:w-auto">
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      >
+                        {CATEGORIES.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+
+                      <div className="relative flex-1 md:w-52">
+                        <Icon name="search" className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="搜尋通告/物品..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full text-xs pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                      <Icon name="clock" className="w-5 h-5 text-teal-600" /> 通告事項時間表 ({filteredNotices.length})
+                    </h2>
+                    <span className="text-xs text-slate-500 font-medium">按日期排序</span>
+                  </div>
+
+                  {filteredNotices.length === 0 ? (
+                    <div className="bg-white rounded-2xl p-10 text-center border border-dashed border-slate-300 space-y-3">
+                      <Icon name="fileText" className="w-12 h-12 text-slate-300 mx-auto" />
+                      <p className="text-slate-600 font-medium text-sm">目前無相關通告紀錄</p>
+                      <button
+                        onClick={() => setActiveTab('add')}
+                        className="px-4 py-2 bg-teal-700 text-white rounded-xl text-xs font-medium hover:bg-teal-800 inline-flex items-center gap-1.5 shadow-xs"
+                      >
+                        <Icon name="plus" className="w-4 h-4" /> 新增 / 上載通告
+                      </button>
+                    </div>
+                  ) : (
+                    filteredNotices.map((notice) => {
+                      const kidInfo = KIDS_CONFIG.find(k => k.id === notice.childId) || KIDS_CONFIG[1];
+                      return (
+                        <div 
+                          key={notice.id}
+                          className={`bg-white rounded-2xl p-5 shadow-xs border transition-all ${
+                            notice.completed ? 'opacity-60 bg-slate-50/80 border-slate-200' : notice.urgent ? 'border-amber-300 bg-gradient-to-r from-amber-50/30 via-white to-white' : 'border-slate-200 hover:border-teal-300'
+                          }`}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                            <div className="space-y-2 flex-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${kidInfo.color}`}>
+                                  {notice.child}
+                                </span>
+                                <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                                  {notice.category}
+                                </span>
+                                {notice.urgent && !notice.completed && (
+                                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200 flex items-center gap-1">
+                                    <Icon name="alert" className="w-3 h-3" /> 優先處理
+                                  </span>
+                                )}
+                              </div>
+
+                              <h3 className={`text-base font-bold ${notice.completed ? 'line-through text-slate-400' : 'text-slate-900'}`}>
+                                {notice.title}
+                              </h3>
+
+                              <p className="text-xs text-slate-600 leading-relaxed">
+                                {notice.summary}
+                              </p>
+                            </div>
+
+                            <div className="shrink-0 bg-slate-50 border border-slate-200 rounded-2xl p-3 text-center min-w-[130px]">
+                              <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">活動/截止日期</div>
+                              <div className="text-sm font-bold text-teal-800 my-0.5">{notice.date}</div>
+                              <div className="text-[11px] text-slate-500 font-medium">{notice.time}</div>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            {notice.itemsToBring && notice.itemsToBring.length > 0 && (
+                              <div className="bg-teal-50/60 rounded-xl p-2.5 border border-teal-100">
+                                <span className="font-bold text-teal-900 flex items-center gap-1.5 mb-1.5">
+                                  <Icon name="shirt" className="w-3.5 h-3.5 text-teal-600" /> 需帶備物資/校服：
+                                </span>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {notice.itemsToBring.map((item, idx) => (
+                                    <span key={idx} className="bg-white text-teal-800 px-2 py-0.5 rounded-md border border-teal-200 text-[11px] font-medium">
+                                      • {item}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {notice.feesOrDocs && (
+                              <div className="bg-indigo-50/60 rounded-xl p-2.5 border border-indigo-100">
+                                <span className="font-bold text-indigo-900 flex items-center gap-1.5 mb-1">
+                                  <Icon name="dollar" className="w-3.5 h-3.5 text-indigo-600" /> 繳費 / 回條表格：
+                                </span>
+                                <p className="text-indigo-800 font-medium">{notice.feesOrDocs}</p>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => toggleComplete(notice.id)}
+                                className={`text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors ${
+                                  notice.completed 
+                                    ? 'bg-slate-200 text-slate-700 hover:bg-slate-300' 
+                                    : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300'
+                                }`}
+                              >
+                                <Icon name="checkSquare" className="w-4 h-4" />
+                                {notice.completed ? '已完成 (標示為未完成)' : '標示為已完成/已交回條'}
+                              </button>
+
+                              <a
+                                href={getGoogleCalendarUrl(notice)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-xl flex items-center gap-1.5 transition-colors"
+                              >
+                                <Icon name="calendar" className="w-3.5 h-3.5 text-blue-600" />
+                                加至 Google 月曆
+                                <Icon name="external" className="w-3 h-3 text-blue-400" />
+                              </a>
+                            </div>
+
+                            <button
+                              onClick={() => deleteNotice(notice.id)}
+                              className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors"
+                              title="刪除這張通告"
+                            >
+                              <Icon name="trash" className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
+
+            {}
+            {activeTab === 'checklist' && (
+              <div className="space-y-6">
+                <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div>
+                      <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <Icon name="checkSquare" className="w-5 h-5 text-teal-600" /> 雙寶物資與簽署核對牆
+                      </h2>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        早上出門或收拾書包前一次過對照勾選！
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => window.print()}
+                      className="no-print self-start sm:self-auto text-xs px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl flex items-center gap-1.5"
+                    >
+                      <Icon name="printer" className="w-3.5 h-3.5" /> 列印備忘清單
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-teal-50/40 rounded-2xl p-4 border border-teal-100 space-y-3">
+                      <h3 className="text-xs font-bold text-teal-900 tracking-wider uppercase flex items-center gap-1.5">
+                        <Icon name="shirt" className="w-4 h-4 text-teal-600" /> Jerald & Jervis 待準備物資
+                      </h3>
+                      <div className="space-y-2.5">
+                        {notices.filter(n => !n.completed && n.itemsToBring && n.itemsToBring.length > 0).length === 0 ? (
+                          <p className="text-xs text-slate-400 italic py-4 text-center">目前沒有需特別準備的物資 🎉</p>
+                        ) : (
+                          notices.filter(n => !n.completed && n.itemsToBring && n.itemsToBring.length > 0).map(n => (
+                            <div key={n.id} className="bg-white p-3 rounded-xl border border-teal-100 shadow-2xs space-y-2">
+                              <div className="flex items-center justify-between text-xs font-bold text-slate-800">
+                                <span>[{n.child}] {n.title}</span>
+                                <span className="text-[10px] text-teal-700 bg-teal-100 px-2 py-0.5 rounded-full">{n.date}</span>
+                              </div>
+                              <ul className="text-xs text-slate-600 space-y-1.5 pl-1">
+                                {n.itemsToBring.map((item, idx) => (
+                                  <li key={idx} className="flex items-center gap-2">
+                                    <input type="checkbox" className="rounded text-teal-600 focus:ring-teal-500 w-4 h-4" />
+                                    <span className="font-medium">{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="bg-indigo-50/40 rounded-2xl p-4 border border-indigo-100 space-y-3">
+                      <h3 className="text-xs font-bold text-indigo-900 tracking-wider uppercase flex items-center gap-1.5">
+                        <Icon name="dollar" className="w-4 h-4 text-indigo-600" /> 待繳交雜費與回條簽署
+                      </h3>
+                      <div className="space-y-2.5">
+                        {notices.filter(n => !n.completed && n.feesOrDocs && n.feesOrDocs !== '無').length === 0 ? (
+                          <p className="text-xs text-slate-400 italic py-4 text-center">所有費用及回條已全數處理完畢！✨</p>
+                        ) : (
+                          notices.filter(n => !n.completed && n.feesOrDocs && n.feesOrDocs !== '無').map(n => (
+                            <div key={n.id} className="bg-white p-3 rounded-xl border border-indigo-100 shadow-2xs space-y-2">
+                              <div className="flex items-center justify-between text-xs font-bold text-slate-800">
+                                <span>[{n.child}] {n.title}</span>
+                                <span className="text-[10px] text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full">{n.date}</span>
+                              </div>
+                              <div className="flex items-center justify-between text-xs text-indigo-900 bg-indigo-50/80 p-2 rounded-lg">
+                                <span className="font-bold">{n.feesOrDocs}</span>
+                                <button 
+                                  onClick={() => toggleComplete(n.id)}
+                                  className="text-[10px] font-bold bg-indigo-600 text-white px-2.5 py-1 rounded-md hover:bg-indigo-700 shadow-2xs"
+                                >
+                                  標示已交
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {}
+            {activeTab === 'calendar' && (
+              <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <Icon name="calendar" className="w-5 h-5 text-teal-600" /> 雙寶月曆總覽
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => setCurrentMonthDate(new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() - 1, 1))}
+                      className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-600"
+                    >
+                      <Icon name="chevronLeft" className="w-4 h-4" />
+                    </button>
+                    <span className="text-sm font-bold text-slate-800">
+                      {currentMonthDate.getFullYear()} 年 {currentMonthDate.getMonth() + 1} 月
+                    </span>
+                    <button 
+                      onClick={() => setCurrentMonthDate(new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 1))}
+                      className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-600"
+                    >
+                      <Icon name="chevronRight" className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="border border-slate-200 rounded-2xl overflow-hidden">
+                  <div className="grid grid-cols-7 bg-slate-50 border-b border-slate-200 text-center py-2 text-xs font-bold text-slate-600">
+                    <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+                  </div>
+                  
+                  {(() => {
+                    const year = currentMonthDate.getFullYear();
+                    const month = currentMonthDate.getMonth();
+                    const firstDayIndex = new Date(year, month, 1).getDay();
+                    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                    const cells = [];
+                    for (let i = 0; i < firstDayIndex; i++) {
+                      cells.push(<div key={`blank-${i}`} className="h-24 bg-slate-50/50 border-r border-b border-slate-100" />);
+                    }
+
+                    for (let day = 1; day <= daysInMonth; day++) {
+                      const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                      const dayNotices = notices.filter(n => n.date === dateString);
+
+                      cells.push(
+                        <div key={day} className="h-24 p-1.5 border-r border-b border-slate-100 hover:bg-slate-50/60 overflow-y-auto">
+                          <div className="text-[11px] font-bold text-slate-700 mb-1">{day}</div>
+                          <div className="space-y-1">
+                            {dayNotices.map(n => (
+                              <div 
+                                key={n.id}
+                                className={`text-[10px] p-1 rounded-md font-medium truncate ${
+                                  n.completed ? 'bg-slate-200 text-slate-500 line-through' :
+                                  n.childId === 'kid1' ? 'bg-blue-100 text-blue-900 border border-blue-200' :
+                                  n.childId === 'kid2' ? 'bg-amber-100 text-amber-900 border border-amber-200' :
+                                  'bg-purple-100 text-purple-900 border border-purple-200'
+                                }`}
+                                title={`${n.child}: ${n.title}`}
+                              >
+                                {n.title}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return <div className="grid grid-cols-7">{cells}</div>;
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {}
+            {activeTab === 'add' && (
+              <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 space-y-6">
+                <div>
+                  <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <Icon name="sparkles" className="w-5 h-5 text-amber-500" /> 新增 / 智能擷取通告
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    可輸入通告文字或上載照片，自動為 Jerald (K2) 或 Jervis (PN) 歸類事項！
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                        <Icon name="fileText" className="w-3.5 h-3.5 text-teal-600" /> 方法 A: 貼上通告內容 (eClass / App 訊息)
+                      </label>
+                      <textarea
+                        rows={5}
+                        placeholder="例如: 各位家長，學之園星匯校將於10月24日舉辦PN班郊遊... 請帶備水壺及星匯校體育服..."
+                        value={rawText}
+                        onChange={(e) => setRawText(e.target.value)}
+                        className="w-full text-xs p-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                        <Icon name="upload" className="w-3.5 h-3.5 text-teal-600" /> 方法 B: 上載通告相片
+                      </label>
+                      <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 bg-white text-center hover:bg-slate-50 transition-colors h-[115px] flex flex-col items-center justify-center relative cursor-pointer">
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+                        />
+                        {imagePreview ? (
+                          <div className="flex items-center gap-3">
+                            <img src={imagePreview} alt="Preview" className="h-16 w-16 object-cover rounded-lg border" />
+                            <div className="text-left">
+                              <span className="text-xs font-bold text-teal-700 block">通告相片已載入</span>
+                              <span className="text-[10px] text-slate-400">點擊重新選擇相片</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <Icon name="upload" className="w-5 h-5 text-slate-400 mb-1" />
+                            <span className="text-xs text-slate-600 font-medium">點擊上載紙本通告相片</span>
+                            <span className="text-[10px] text-slate-400 mt-0.5">支援 PNG / JPG 格式</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAIParse}
+                    disabled={isParsing}
+                    className="w-full py-3 bg-gradient-to-r from-teal-800 to-indigo-800 hover:from-teal-900 hover:to-indigo-900 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 transition-all"
+                  >
+                    {isParsing ? (
+                      <>
+                        <Icon name="loader" className="w-4 h-4 animate-spin" /> AI 分析通告中...
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="sparkles" className="w-4 h-4 text-amber-300" /> 啟動 AI 智能辨識與自動歸類
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <form onSubmit={handleSaveNotice} className="space-y-4 pt-2 border-t border-slate-100">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    通告資料確認：
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">通告標題 *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        placeholder="例如: 樂希K2郊遊通知 或 學之園PN回條"
+                        className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">適用對象 *</label>
+                      <select
+                        value={formData.childId}
+                        onChange={(e) => setFormData({ ...formData, childId: e.target.value })}
+                        className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500"
+                      >
+                        {KIDS_CONFIG.filter(k => k.id !== 'all').map(k => (
+                          <option key={k.id} value={k.id}>{k.name} ({k.school})</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">活動 / 截止日期 *</label>
+                      <input
+                        type="date"
+                        required
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">時間或時段</label>
+                      <input
+                        type="text"
+                        value={formData.time}
+                        onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                        placeholder="例如: 09:00 - 12:00 或 截止交回條"
+                        className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">通告類別</label>
+                      <select
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500"
+                      >
+                        {CATEGORIES.filter(c => c !== '全部類別').map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">繳交費用 / 回條表格</label>
+                      <input
+                        type="text"
+                        value={formData.feesOrDocs}
+                        onChange={(e) => setFormData({ ...formData, feesOrDocs: e.target.value })}
+                        placeholder="例如: 車費 $120 / 簽署牙科保健回條"
+                        className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-700">要帶備的物資/校服 (用逗號隔開)</label>
+                    <input
+                      type="text"
+                      value={formData.itemsToBring}
+                      onChange={(e) => setFormData({ ...formData, itemsToBring: e.target.value })}
+                      placeholder="例如: 樂希體育服, 水壺, 雨具"
+                      className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-700">重點摘要說明</label>
+                    <textarea
+                      rows={2}
+                      value={formData.summary}
+                      onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                      placeholder="記錄重點內容..."
+                      className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.urgent}
+                        onChange={(e) => setFormData({ ...formData, urgent: e.target.checked })}
+                        className="rounded text-teal-600 focus:ring-teal-500 w-4 h-4"
+                      />
+                      <span className="text-xs font-bold text-rose-700">標示為「優先處理」</span>
+                    </label>
+
+                    <button
+                      type="submit"
+                      className="px-6 py-2.5 bg-teal-800 hover:bg-teal-900 text-white font-bold text-xs rounded-xl shadow-md transition-all"
+                    >
+                      儲存通告
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {}
+            {activeTab === 'share' && (
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-6">
+                  <div>
+                    <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                      <Icon name="database" className="w-5 h-5 text-indigo-600" /> 夫妻同步 & 設定
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-1">
+                      隨時匯出與還原 Jerald & Jervis 的通告進度，資料全儲存於本地瀏覽器，適合部署至 GitHub Pages！
+                    </p>
+                  </div>
+
+                  {/* Gemini API Key Setting */}
+                  <div className="bg-amber-50/60 p-4 rounded-2xl border border-amber-200 space-y-2">
+                    <h3 className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                      <Icon name="key" className="w-4 h-4 text-amber-600" /> Google Gemini API Key 設定 (選填)
+                    </h3>
+                    <p className="text-[11px] text-amber-800">
+                      如需使用 AI 自動識別通告相片功能，請在此輸入您的免費 Gemini API Key。
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="password"
+                        placeholder="貼上您的 Gemini API Key..."
+                        value={geminiApiKey}
+                        onChange={(e) => setGeminiApiKey(e.target.value)}
+                        className="flex-1 text-xs p-2.5 bg-white border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500"
+                      />
+                      <button
+                        onClick={() => showToast('🔑 Key 已儲存至此裝置')}
+                        className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shrink-0"
+                      >
+                        儲存 Key
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Backup & Import Panel */}
+                  <div className="bg-indigo-50/60 p-5 rounded-2xl border border-indigo-200 space-y-4">
+                    <h3 className="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
+                      <Icon name="download" className="w-4 h-4 text-indigo-600" /> 1. 備份與還原資料
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button
+                        onClick={exportJSONBackup}
+                        className="py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-xs transition-colors"
+                      >
+                        <Icon name="download" className="w-4 h-4" /> 下載備份檔 (.json)
+                      </button>
+
+                      <button
+                        onClick={copyJSONText}
+                        className="py-3 px-4 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-xs transition-colors"
+                      >
+                        <Icon name="copy" className="w-4 h-4" /> 複製備份文字傳給另一半
+                      </button>
+                    </div>
+
+                    <div className="pt-3 border-t border-indigo-100 space-y-2">
+                      <label className="text-xs font-bold text-indigo-950 block">
+                        還原資料 (匯入備份):
+                      </label>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <input
+                          type="text"
+                          placeholder="在此貼上備份文字..."
+                          value={importText}
+                          onChange={(e) => setImportText(e.target.value)}
+                          className="flex-1 text-xs p-2.5 bg-white border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500"
+                        />
+                        <button
+                          onClick={() => handleImportJSON(importText)}
+                          className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shrink-0"
+                        >
+                          從文字還原
+                        </button>
+                        
+                        <label className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl shrink-0 cursor-pointer text-center">
+                          上載 .json 檔案
+                          <input 
+                            type="file" 
+                            accept=".json" 
+                            onChange={handleFileUploadImport}
+                            className="hidden" 
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* WhatsApp Quick Copy */}
+                  <div className="bg-emerald-50/60 p-5 rounded-2xl border border-emerald-100 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+                        <Icon name="send" className="w-4 h-4 text-emerald-600" /> 2. 一鍵複製 WhatsApp 週報給另一半
+                      </h3>
+                      <button
+                        onClick={() => {
+                          try {
+                            const textarea = document.createElement('textarea');
+                            textarea.value = generateWhatsAppSummary();
+                            document.body.appendChild(textarea);
+                            textarea.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(textarea);
+                            showToast('📋 已複製 WhatsApp 摘要！');
+                          } catch (e) {
+                            showToast('複製失敗，請手動複製');
+                          }
+                        }}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1 transition-colors"
+                      >
+                        <Icon name="copy" className="w-3.5 h-3.5" /> 複製訊息
+                      </button>
+                    </div>
+                    <pre className="bg-white p-3 rounded-xl border border-emerald-200 text-[11px] text-slate-700 whitespace-pre-wrap font-sans max-h-48 overflow-y-auto">
+                      {generateWhatsAppSummary()}
+                    </pre>
+                  </div>
+
+                  {/* Data Reset Confirmation */}
+                  <div className="pt-2 flex flex-col items-end gap-2">
+                    {!showResetConfirm ? (
+                      <button
+                        onClick={() => setShowResetConfirm(true)}
+                        className="text-xs text-slate-400 hover:text-rose-600 flex items-center gap-1 underline"
+                      >
+                        <Icon name="refresh" className="w-3.5 h-3.5" /> 重設為預設範例資料
+                      </button>
+                    ) : (
+                      <div className="bg-rose-50 border border-rose-200 p-3 rounded-xl flex items-center gap-3">
+                        <span className="text-xs font-bold text-rose-800">確定重設回預設範例資料？</span>
+                        <button
+                          onClick={executeResetToDemo}
+                          className="px-3 py-1 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-700"
+                        >
+                          確定
+                        </button>
+                        <button
+                          onClick={() => setShowResetConfirm(false)}
+                          className="px-3 py-1 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300"
+                        >
+                          取消
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              </div>
+            )}
+
+          </main>
+
+          {/* Footer */}
+          <footer className="bg-slate-100 border-t border-slate-200 py-4 text-center text-xs text-slate-500 no-print">
+            <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+              <span>🏫 雙寶幼稚園通告管家 • Jerald & Jervis 香港特別版</span>
+              <span>樂希幼兒學校 HARTS PRESCHOOL & 學之園星匯校</span>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
+  </script>
+</body>
+</html>
